@@ -47,7 +47,7 @@ namespace PoCLight
         private async void Initialize()
         {
             // Initialize and configure sensor
-            //await InitializeAPDS9960();
+            await InitializeAPDS9960();
 
             // Configure timer to 2000ms delayed start and 60000ms interval
             sensorTimer = new Timer(new TimerCallback(SensorTimerTick), null, 2000, 20000);
@@ -66,16 +66,16 @@ namespace PoCLight
         private static void SensorTimerTick(object state)
         {
             // Read sensor data
-            //double al = apds.ReadAmbientLight();
+            double al = apds.ReadAmbientLight();
 
             // Write sensor data to output / immediate window
-            //Debug.WriteLine("Ambient Light: " + al.ToString());
-            Debug.WriteLine("Ambient Light: " + 55);
+            Debug.WriteLine("Ambient Light: " + al.ToString());
+            //Debug.WriteLine("Ambient Light: " + 55);
 
             // Create telemetry instance to store sensor data
             Telemetry telemetry = new Telemetry();
-            //telemetry.AmbientLight = al;
-            telemetry.AmbientLight = 55.5555;
+            telemetry.AmbientLight = al;
+            //telemetry.AmbientLight = 55.5555;
 
             // Convert telemetry JSON to string
             string telemetryJSON = JsonConvert.SerializeObject(telemetry);
@@ -93,7 +93,7 @@ namespace PoCLight
             var deviceClient = DeviceClient.Create(iotHubUri,
                 AuthenticationMethodFactory.
                 CreateAuthenticationWithRegistrySymmetricKey(deviceId, deviceKey),
-                TransportType.Amqp);
+                TransportType.Http1);
 
             var message = new Message(Encoding.ASCII.GetBytes(msg));
 
