@@ -27,6 +27,9 @@ namespace PoCLight
     public class Telemetry
     {
         public double AmbientLight { get; set; }
+        public double Sicaklik { get; set; }
+        public double Nem { get; set; }
+        public double Basinc { get; set; }
     }
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -35,6 +38,10 @@ namespace PoCLight
     {
         // APDS-9960 Sensor
         static APDS9960Sensor apds;
+        // BME280Sensor
+        static BME280Sensor bme;
+
+        static int count = 0;
 
         // Sensor timer
         Timer sensorTimer;
@@ -46,8 +53,10 @@ namespace PoCLight
         }
         private async void Initialize()
         {
-            // Initialize and configure sensor
+            // Initialize and configure sensor: APDS9960
             await InitializeAPDS9960();
+            // Initialize and configure sensor: BME280Sensor
+            //await InitializeBME280Sensor();
 
             // Configure timer to 2000ms delayed start and 60000ms interval
             sensorTimer = new Timer(new TimerCallback(SensorTimerTick), null, 2000, 20000);
@@ -55,9 +64,12 @@ namespace PoCLight
 
         private async Task InitializeAPDS9960()
         {
-            // Create sensor instance
+            // Create sensor instance: APDS9960
             // Ambient & RGB light: enabled, proximity: disabled, gesture: disabled
             apds = new APDS9960Sensor(true, false, false);
+            
+            // Create sensor instance: BME280
+            bme = new BME280Sensor();
 
             // Delay 1ms
             await Task.Delay(1);
@@ -65,15 +77,30 @@ namespace PoCLight
 
         private static void SensorTimerTick(object state)
         {
-            // Read sensor data
+            // Read sensor data: al
             double al = apds.ReadAmbientLight();
+
+            // Read sensor data: bme
+            double derece = bme.ReadTemperature();
+            double nem = bme.ReadHumidity();
+            double basinc = bme.ReadPressure();
 
             // Write sensor data to output / immediate window
             Debug.WriteLine("Ambient Light: " + al.ToString());
-            //Debug.WriteLine("Ambient Light: " + 55);
+            Debug.WriteLine("Sıcaklık: " + derece.ToString());
+            Debug.WriteLine("Nem: " + nem.ToString());
+            Debug.WriteLine("Basınç: " + basinc.ToString());
+
+            count = count + 1;
+            Debug.WriteLine("Sıra: " + count);
+            Debug.WriteLine("--------------");
+
+            Telemetry telemetry = new Telemetry();
+            telemetry.Sicaklik = derece;
+            telemetry.Nem = nem;
+            telemetry.Basinc = basinc;
 
             // Create telemetry instance to store sensor data
-            Telemetry telemetry = new Telemetry();
             telemetry.AmbientLight = al;
             //telemetry.AmbientLight = 55.5555;
 
