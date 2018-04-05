@@ -30,6 +30,7 @@ namespace PoCLight
         public double Sicaklik { get; set; }
         public double Nem { get; set; }
         public double Basinc { get; set; }
+        public string Saat { get; set; }
     }
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -85,7 +86,20 @@ namespace PoCLight
             double nem = bme.ReadHumidity();
             double basinc = bme.ReadPressure();
 
+            Telemetry telemetry = new Telemetry();
+            telemetry.Sicaklik = derece;
+            telemetry.Nem = nem;
+            telemetry.Basinc = basinc;
+
+            // Create telemetry instance to store sensor data
+            telemetry.AmbientLight = al;
+
+            // Set Measure Time
+            DateTime localDate = DateTime.Now;
+            telemetry.Saat = localDate.ToString();
+
             // Write sensor data to output / immediate window
+            Debug.WriteLine("Zaman: " + telemetry.Saat);
             Debug.WriteLine("Ambient Light: " + al.ToString());
             Debug.WriteLine("Sıcaklık: " + derece.ToString());
             Debug.WriteLine("Nem: " + nem.ToString());
@@ -94,15 +108,6 @@ namespace PoCLight
             count = count + 1;
             Debug.WriteLine("Sıra: " + count);
             Debug.WriteLine("--------------");
-
-            Telemetry telemetry = new Telemetry();
-            telemetry.Sicaklik = derece;
-            telemetry.Nem = nem;
-            telemetry.Basinc = basinc;
-
-            // Create telemetry instance to store sensor data
-            telemetry.AmbientLight = al;
-            //telemetry.AmbientLight = 55.5555;
 
             // Convert telemetry JSON to string
             string telemetryJSON = JsonConvert.SerializeObject(telemetry);
