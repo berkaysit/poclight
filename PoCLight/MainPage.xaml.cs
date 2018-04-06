@@ -27,10 +27,10 @@ namespace PoCLight
     public class Telemetry
     {
         public double AmbientLight { get; set; }
-        public double Sicaklik { get; set; }
-        public double Nem { get; set; }
-        public double Basinc { get; set; }
-        public string Saat { get; set; }
+        public double Temperature { get; set; }
+        public double Humidity { get; set; }
+        public double Pressure { get; set; }
+        public string DateTime { get; set; }
     }
     /// <summary>
     /// An empty page that can be used on its own or navigated to within a Frame.
@@ -60,7 +60,7 @@ namespace PoCLight
             //await InitializeBME280Sensor();
 
             // Configure timer to 2000ms delayed start and 60000ms interval
-            sensorTimer = new Timer(new TimerCallback(SensorTimerTick), null, 2000, 20000);
+            sensorTimer = new Timer(new TimerCallback(SensorTimerTick), null, 2000, 30000);
         }
 
         private async Task InitializeAPDS9960()
@@ -80,30 +80,32 @@ namespace PoCLight
         {
             // Read sensor data: al
             double al = apds.ReadAmbientLight();
-
+            
             // Read sensor data: bme
             double derece = bme.ReadTemperature();
             double nem = bme.ReadHumidity();
             double basinc = bme.ReadPressure();
 
-            Telemetry telemetry = new Telemetry();
-            telemetry.Sicaklik = derece;
-            telemetry.Nem = nem;
-            telemetry.Basinc = basinc;
-
             // Create telemetry instance to store sensor data
-            telemetry.AmbientLight = al;
+            Telemetry telemetry = new Telemetry();
+            
+            telemetry.AmbientLight = Math.Round(al, 2);
+            telemetry.Temperature = Math.Round(derece, 2);
+            telemetry.Humidity = Math.Round(nem, 2);
+            telemetry.Pressure = Math.Round(basinc, 2);
 
             // Set Measure Time
             DateTime localDate = DateTime.Now;
-            telemetry.Saat = localDate.ToString();
+
+            string utcFormat = localDate.ToUniversalTime().ToString("yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'");
+            telemetry.DateTime = utcFormat;
 
             // Write sensor data to output / immediate window
-            Debug.WriteLine("Zaman: " + telemetry.Saat);
-            Debug.WriteLine("Ambient Light: " + al.ToString());
-            Debug.WriteLine("Sıcaklık: " + derece.ToString());
-            Debug.WriteLine("Nem: " + nem.ToString());
-            Debug.WriteLine("Basınç: " + basinc.ToString());
+            Debug.WriteLine("Date Time: " + telemetry.DateTime);
+            Debug.WriteLine("Ambient Light: " + telemetry.AmbientLight.ToString());
+            Debug.WriteLine("Temperature: " + telemetry.Temperature.ToString());
+            Debug.WriteLine("Humidity: " + telemetry.Humidity.ToString());
+            Debug.WriteLine("Pressure: " + telemetry.Pressure.ToString());
 
             count = count + 1;
             Debug.WriteLine("Sıra: " + count);
