@@ -8,6 +8,9 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Rectangle HorizontalAlignment="Left" Height="239" Margin="245,435,0,0" VerticalAlignment="Top" Width="937"/>
+        <TextBox HorizontalAlignment="Left" Height="338" Margin="193,92,0,0" Text="TextBox" VerticalAlignment="Top" Width="1080" TextChanged="TextBox_TextChanged"/>
+        <TextBox HorizontalAlignment="Left" Margin="193,487,0,0" Text="TextBox" VerticalAlignment="Top" Height="71" Width="725"/>
 
     </Grid>
 </Page>
